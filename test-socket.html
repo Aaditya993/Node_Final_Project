@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FarmSmart Live Dashboard</title>
+    <!-- This loads the official Socket.io client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2>FarmSmart Live Sensor Dashboard</h2>
+    <p>Server Status: <span id="status" style="color: red; font-weight: bold;">Disconnected 🔴</span></p>
+    
+    <button onclick="sendFakeData()" style="padding: 10px; font-size: 16px; cursor: pointer;">
+        Simulate Sensor Sending Data
+    </button>
+
+    <script>
+        // Connect to your Express server running on port 5000
+        const socket = io('http://localhost:5000');
+
+        // When successfully connected
+        socket.on('connect', () => {
+            document.getElementById('status').innerText = 'Connected 🟢';
+            document.getElementById('status').style.color = 'green';
+        });
+
+        // Send data to the server when button is clicked
+        function sendFakeData() {
+            const data = { moisture: 42, temperature: 28 };
+            socket.emit('sendSensorData', data);
+        }
+
+        // Listen for the server sending live updates back
+        socket.on('liveDashboardUpdate', (data) => {
+            alert(`Live Update Received from Node.js! \nMoisture: ${data.moisture}% \nTemperature: ${data.temperature}°C`);
+        });
+    </script>
+</body>
+</html>
